@@ -12,18 +12,17 @@ To build this model in Amazon SageMaker, Visit Amazon SageMaker console (https:/
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-1.gif)
 
 
-Create notebook instance. Provide the name for your notebook instance and select an instance type (for example ml.t2.medium). Choose to create a new role or use an existing role. Choose Create notebook instance. ***GIVE Notebook Instance unique name e.g. imageclassiciation-name-date***
+Create notebook instance. Provide the name for your notebook instance and select an instance type (for example ml.t2.medium). Choose to use an existing role and select the one available. Leave the rest of the parameters with the default values and click on Create notebook instance. ***IMPORTANT: Give the Notebook Instance a unique name e.g. imageclassification-user0xx***, where *user0xx* corresponds with your assigned DeepLens device.
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-2.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-2.png)
 
+Once your notebook instance is running, open Jupyter on the notebook instance you just created.
 
-Once your notebook instance is created, open the notebook instance you just created.
-
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-3.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-3.png)
 
 You will see the Jupyter notebook hosted in your instance.
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-4.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-4.png)
 
 ***Source code for The SageMaker notebook Sagemaker_Imageclassification.ipynb and related lamda greegrassHelloWorld.py and label file caltech256_labels.txt is attached to this git under SageMakerImageClassification folder*** No need to copy paste the code from readme.
 
@@ -36,14 +35,15 @@ The "New" tab on the top right can be used to create new files, as well as open 
 Once in the terminal, run the following commands to clone the repo into the dashboard's root directory:
 ```shell
 cd SageMaker/
-git clone https://github.com/mahendrabairagi/DeeplensWorkshop.git
+git clone https://github.com/tasiogr/DeeplensWorkshop.git
 ```
 
 Select that folder, then select the folder "SageMakerImageClassification". You should see contents similar to this:
+![](SageMakerImageClassification/images/jupyter-overview.png)
 
 Next, click on "Sagemaker_Imageclassification.ipynb" to open up the notebook. You should now be looking at a Jupyter notebook:
-
-***Here is walkthrough of the notebook
+![](SageMakerImageClassification/images/notebook-overview.png)
+## Notebook walkthrough
 
 If you would like to create new notebook and not use one from git (Sagemaker_Imageclassification.ipynb) then Create a new notebook by choosing New and conda_mxnet_p36 kernel.
 
@@ -58,20 +58,26 @@ from sagemaker import get_execution_role
 role = get_execution_role()
 ```
 
-#Next we define a bucket which hosts the dataset that will be used. In this example, the dataset is Caltech- 256. Create a bucket in your S3. The name for your bucket must contain the prefix ‘deeplens’. In this example, the bucket is ‘deeplens-imageclassification’. ***Make Sure S3 bucket name is unique, e.g. deeplens-imageclassfication-name-date***
+Next we define a bucket which hosts the dataset that will be used. In this example, the dataset is Caltech- 256. Create a bucket in your S3. The name for your bucket must contain the prefix ‘deeplens’. In this example, the bucket is ‘deeplens-sagemaker-loft-workshop’. ***Make Sure S3 bucket name is unique, e.g. deeplens-imageclassfication-name-date***
 
 ```
 #change the bucket name to your bucketname
-bucket='deeplens-imageclassification-name-date' 
-#Next we define the containers. Containers are docker containers and the training job defined in this notebook will run in the container for your region.
+bucket='deeplens-sagemaker-loft-workshop-userxxx' 
+```
+```
+!aws s3 mb s3://{bucket}
+```
 
+Next we define the containers. Containers are docker containers and the training job defined in this notebook will run in the container for your region.
+```
 containers = {'us-west-2': '433757028032.dkr.ecr.us-west-2.amazonaws.com/image-classification:latest',
               'us-east-1': '811284229777.dkr.ecr.us-east-1.amazonaws.com/image-classification:latest',
               'us-east-2': '825641698319.dkr.ecr.us-east-2.amazonaws.com/image-classification:latest',
               'eu-west-1': '685385470294.dkr.ecr.eu-west-1.amazonaws.com/image-classification:latest'}
 training_image = containers[boto3.Session().region_name]
-#Next let’s import the dataset and upload it to your S3 bucket. We will download the train and validation sets for Caltech-256 and upload it to the S3 bucket created earlier.
-
+```
+Next let’s import the dataset and upload it to your S3 bucket. We will download the train and validation sets for Caltech-256 and upload it to the S3 bucket created earlier.
+```
 import os 
 import urllib.request
 import boto3
@@ -156,9 +162,9 @@ from time import gmtime, strftime
 
 s3 = boto3.client('s3')
 # create unique job name 
-# Make sure job_name_prefix is unique e.g. add yourname to your job_name_prefix
+# Make sure job_name_prefix is unique e.g. add your user name to your job_name_prefix
 
-job_name_prefix = 'DEMO-imageclassification-yourname'
+job_name_prefix = 'workshop-imageclassification-userxxx'
 timestamp = time.strftime('-%Y-%m-%d-%H-%M-%S', time.gmtime())
 job_name = job_name_prefix + timestamp
 training_params = \
@@ -278,20 +284,20 @@ Choose – Create a new blank project
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-10.gif)
 
-Name project – e.g. imageclassification
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-11.gif)
+Name the project with a unique name – e.g. imageclassification-userxxx
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-11.png)
 
 Select Add Model – this will open new page, “Import model to AWS Deeplens”
 
-Select Amazon SageMaker trained model, in the Model setting, Amazon SageMaker training job ID drop down, select the imageclassification model you selected. In Model name choose model name e.g. imageclassification, keep description as image classification.
+Select Amazon SageMaker trained model, in the Model setting, Amazon SageMaker training job ID drop down, select the imageclassification model you selected. In Model name choose a unique model name e.g. imageclassification-userxxx, keep description as image classification.
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-12.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-12.png)
 
-If you couldnot train model using Sagemaker then select "Externally trained model" and in S3 bucket enter "deeplens-mahendra/techsummit". In Model name choose model name e.g. imageclassification, keep description as image classification. select "import model" to save the configuration.
+If you could not train model using Sagemaker then select "Externally trained model" and in S3 bucket enter "deeplens-mahendra/techsummit". In Model name choose model name e.g. imageclassification, keep description as image classification. Select MXNet as the Model framework and click on "Import model" to save the configuration.
 
 Go back to import model screen, select the imageclassification model you imported earlier, click Add model. Once model is added, you need to add a lambda function by choosing Add function.
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-13.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-13.png)
 
 To create a AWS DeepLens lambda function, you can follow the blog post: Dive deep into AWS DeepLens Lambda functions and the new model optimizer.
 
@@ -302,19 +308,27 @@ To create an inference Lambda function, use the AWS Lambda console and follow th
  1. Choose Create function. You customize this function to run inference for your deep learning models.
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-14.gif)
 
-2. Choose Blueprints
+2. Choose 'Browse serverless app repository'
 
-3. Search for the greengrass-hello-world blueprint.
+3. Search for the greengrass-hello-world application and click on it
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.png)
 
-4. Give your Lambda function the unique name  e.g. imageclassification_yourname_lambda.
+4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter your user name and click 'Deploy'.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.1.png)
 
 5. Choose an existing IAM role: AWSDeepLensLambdaRole. You must have created this role as part of the registration process.
 
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.gif)
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.png)
 
-6. Choose Create function.
+This will launch a CloudFormation Stack that will deploy the Lambda function and an IAM role for it.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.1.png)
+
+6. Click on the resource called greengrasshelloworld, that will take you to the Lambda function that was just deployed. Scroll down until you see its code.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.2.png)
 
 7. In Function code, make sure the handler is greengrassHelloWorld.function_handler.
 
