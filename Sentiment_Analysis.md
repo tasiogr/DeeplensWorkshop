@@ -19,12 +19,12 @@ The workshop consists of 4 hands-on lab sessions:
 
 # Hands-on Step 1: Register and configure your DeepLens device (You can skip this lab if device registration is already complete)
 
-Follow instructions here: [Registration and Deployment lab](https://github.com/mahendrabairagi/DeeplensWorkshop/tree/master/Registration%20and%20project%20deployment)
+Follow instructions here: [Registration and Deployment lab](https://github.com/tasiogr/DeeplensWorkshop/tree/master/Registration%20and%20project%20deployment)
 
 
 # Hands-on Step 2: Build and train a face detection model in SageMaker
 
-In this lab, you will build and train a face detection model. Follow instructions here: [SageMaker lab](https://github.com/mahendrabairagi/DeeplensWorkshop/tree/master/SageMaker%20lab)
+In this lab, you will build and train a face detection model. Follow instructions here: [SageMaker lab](https://github.com/tasiogr/DeeplensWorkshop/tree/master/SageMaker%20lab)
 
 # Hands-on Step 3: Build a project to detect faces and send the cropped faces to S3 bucket
 
@@ -48,7 +48,7 @@ Go to [AWS Management console](https://console.aws.amazon.com/console/home?regio
 
 Choose 'Create bucket'
 
-Name your bucket : face-detection-your-name
+Name your bucket : face-detection-your-user-name
 
 Click on Create 
 
@@ -66,18 +66,38 @@ Go to [AWS Management console](https://console.aws.amazon.com/console/home?regio
 
 Click 'Create function'
 
-Choose 'Blueprints'
+1. Choose Create function. You customize this function to run inference for your deep learning models.
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-14.gif)
 
-In the search bar, type “greengrass-hello-world” and hit Enter
+2. Choose 'Browse serverless app repository'
 
-Choose the python blueprint and click Configure
+3. Search for the greengrass-hello-world application and click on it
 
-Name the function: DeepLens-sentiment-your-name
-Role: Choose an existing role
-Existing Role: AWSDeepLensLambdaRole
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.png)
 
-Click Create Function
-Replace the default script with the [inference script](https://github.com/mahendrabairagi/DeeplensWorkshop/blob/master/Inference%20Lambda/inference-lambda.py)
+4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter 'sentiment-userxxx' with your own user name and click 'Deploy'.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.1.png)
+
+5. Choose an existing IAM role: AWSDeepLensLambdaRole. You must have created this role as part of the registration process.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.png)
+
+This will launch a CloudFormation Stack that will deploy the Lambda function and an IAM role for it.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.1.png)
+
+6. Click on the resource called greengrasshelloworld, that will take you to the Lambda function that was just deployed. Scroll down until you see its code.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-16.2.png)
+
+7. In Function code, make sure the handler is greengrassHelloWorld.function_handler.
+
+8. In the GreengrassHello file, remove all of the code. You will write the code for inference Lambda function in this file.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-17.gif)
+
+Replace the default script with the [inference script](https://github.com/tasiogr/DeeplensWorkshop/blob/master/Inference%20Lambda/inference-lambda.py)
 
 You can select the inference script, by selecting Raw in the Github page and choosing the script using ctrl+A/ cmd+A . Copy the script and paste it into the lambda function (make sure you delete the default code).
 
@@ -380,7 +400,7 @@ Existing role: rekognizeEmotions
 
 Choose Create function
 
-Replace the default script with the script in [recognize-emotions.py](https://github.com/mahendrabairagi/DeeplensWorkshop/blob/master/Integrate%20with%20Rekognition/rekognize-emotions.py). You can select the script by selecting Raw in the Github page and choosing the script using ctrl+A/ cmd+A . Copy the script and paste it into the lambda function (make sure you delete the default code).
+Replace the default script with the script in [recognize-emotions.py](https://github.com/tasiogr/DeeplensWorkshop/blob/master/Integrate%20with%20Rekognition/rekognize-emotions.py). You can select the script by selecting Raw in the Github page and choosing the script using ctrl+A/ cmd+A . Copy the script and paste it into the lambda function (make sure you delete the default code).
 
 Make sure you enter the table name you created earlier in the section highlighted below:
 

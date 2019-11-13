@@ -305,7 +305,7 @@ To provide an easy reference, we have provided the instructions for the lambda f
 
 To create an inference Lambda function, use the AWS Lambda console and follow the steps below:
 
- 1. Choose Create function. You customize this function to run inference for your deep learning models.
+1. Choose Create function. You customize this function to run inference for your deep learning models.
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-14.gif)
 
 2. Choose 'Browse serverless app repository'
