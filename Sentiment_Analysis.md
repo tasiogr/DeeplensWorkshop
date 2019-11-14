@@ -6,9 +6,9 @@ In this project you will learn to build a deep learning model to identify and an
 
 ## In this workshop you will learn the following:
 
-1. Modify the DeepLens inference lambda function to upload cropped faces to S3
-2. Deploy the inference lambda function and face detection model to DeepLens
-3. Create a lambda function to trigger Rekognition to identify emotions
+1. Modify the DeepLens inference Lambda function to upload cropped faces to S3
+2. Deploy the inference Lambda function and face detection model to DeepLens
+3. Create a Lambda function to trigger Rekognition to identify emotions
 4. Create a DynamoDB table to store the recognized emotions
 5. Analyze using CloudWatch
 
@@ -29,7 +29,7 @@ In this lab, you will deploy a built-in face detection model and Lambda function
 
 #### IAM Roles: (Optional step - if IAM role exists then skip this step)
 
-First, we need to add S3 permissions to the DeepLens Lambda role so the lambda on the device can call Put Object into the bucket of interest.
+First, we need to add S3 permissions to the DeepLens Lambda role so the Lambda on the device can call Put Object into the bucket of interest.
 
 Go to [IAM Console](https://console.aws.amazon.com/iam/home?region=us-east-1#/home)
 
@@ -51,15 +51,15 @@ Name your bucket : face-detection-userxxx (substitute xxx with your own number)
 
 Click on Create 
 
-#### Create Inference lambda function:
+#### Create Inference Lambda function:
 
 A DeepLens **Project** consists of two things:
 * A model artifact: This is the model that is used for inference.
 * A Lambda function: This is the script that runs inference on the device.
 
-Before we deploy a project to DeepLens, we need to create a custom lambda function that will use the face-detection model on the device to detect faces and push crops to S3.
+Before we deploy a project to DeepLens, we need to create a custom Lambda function that will use the face-detection model on the device to detect faces and push crops to S3.
 
-#### Create Inference lambda function:
+#### Create Inference Lambda function:
 
 Go to [AWS Management console](https://console.aws.amazon.com/console/home?region=us-east-1) and search for Lambda
 
@@ -96,9 +96,9 @@ This will launch a CloudFormation Stack that will deploy the Lambda function and
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-17.gif)
 
-Replace the default script with the [inference script](https://raw.githubusercontent.com/tasiogr/DeeplensWorkshop/master/Inference%20Lambda/inference-lambda.py)
+Replace the default script with the [inference script](https://raw.githubusercontent.com/tasiogr/DeeplensWorkshop/master/Inference%20Lambda/inference-Lambda.py)
 
-Copy the script and paste it into the lambda function (make sure you delete the default code).
+Copy the script and paste it into the Lambda function (make sure you delete the default code).
 
 **Note**: In the script, you will have to provide the name for your S3 bucket. Insert your bucket name in the code below
 
@@ -284,13 +284,13 @@ Then, enter a brief description and click "Publish."
 
 ![Alt text](/screenshots/deeplens_lambda_2.png)
 
-Before we can run this lambda on the device, we need to attach the right permissions to the right roles. While we assigned a role to this lambda, "AWSDeepLensLambdaRole", it's only a placeholder. Lambda's deployed through greengrass actually inherit their policy through a greengrass group role.
+Before we can run this Lambda on the device, we need to attach the right permissions to the right roles. While we assigned a role to this Lambda, "AWSDeepLensLambdaRole", it's only a placeholder. Lambda's deployed through greengrass actually inherit their policy through a greengrass group role.
 
 We need to add permissions to this role for the Lambda function to access S3, but this already prepared in this workshop. However, if you would want to do this, go to the IAM dashboard, find the "AWSDeepLensGreenGrassGroupRole", and attach the policy "AmazonS3FullAccess" or create a more restrictive one.
 
 ### Create & Deploy DeepLens Project
 
-With the lambda created, we can now make a project using it and the built-in face detection model.
+With the Lambda created, we can now make a project using it and the built-in face detection model.
 
 From the DeepLens homepage dashboard, select "Projects" from the left side-bar:
 
@@ -312,7 +312,7 @@ Next, select "Add model". From the pop-up window, select "deeplens-face-detectio
 
 ![Alt text](/screenshots/deeplens_project_4.png)
 
-Next, select "Add function". from the pop-up window, select your deeplens lambda function and click "Add function".
+Next, select "Add function". from the pop-up window, select your deeplens Lambda function and click "Add function".
 
 ![Alt text](/screenshots/deeplens_project_5.png)
 
@@ -355,7 +355,7 @@ Primary key: s3key
 
 Click on Create. This will create a table in your DynamoDB.
 
-**Step II- Create a role for cloud lambda function** (Optional step - skip this step if Role already exists)
+**Step II- Create a role for cloud Lambda function** (Optional step - skip this step if Role already exists)
 
 Go to [AWS Management console](https://console.aws.amazon.com/console/home?region=us-east-1) and search for IAM
 
@@ -379,9 +379,9 @@ Provide a name for the role: rekognizeEmotions
 Choose 'Create role'
 
 
-**Step III- Create a lambda function that runs in the cloud**
+**Step III- Create a Lambda function that runs in the cloud**
 
-The inference lambda function that you deployed earlier will upload the cropped faces to your S3. On S3 upload, this new lambda function gets triggered and runs the Rekognize Emotions API by integrating with Amazon Rekognition. 
+The inference Lambda function that you deployed earlier will upload the cropped faces to your S3. On S3 upload, this new Lambda function gets triggered and runs the Rekognize Emotions API by integrating with Amazon Rekognition. 
 
 Go to [AWS Management console](https://console.aws.amazon.com/console/home?region=us-east-1) and search for Lambda
 
@@ -396,24 +396,26 @@ Existing role: rekognizeEmotions
 
 Choose Create function
 
-Replace the default script with the script in [recognize-emotions.py](https://github.com/tasiogr/DeeplensWorkshop/blob/master/Integrate%20with%20Rekognition/rekognize-emotions.py). You can select the script by selecting Raw in the Github page and choosing the script using ctrl+A/ cmd+A . Copy the script and paste it into the lambda function (make sure you delete the default code).
+Replace the default script with the script in [recognize-emotions.py](https://raw.githubusercontent.com/tasiogr/DeeplensWorkshop/master/Integrate%20with%20Rekognition/rekognize-emotions.py). Copy the script and paste it into the Lambda function (make sure you delete the default code).
 
 Make sure you enter the table name you created earlier in the section highlighted below:
 
 ![dynamodb](https://user-images.githubusercontent.com/11222214/38838790-b8b72116-418c-11e8-9a77-9444fc03bba6.JPG)
 
 
-Next, we need to add the event that triggers this lambda function. This will be an “S3:ObjectCreated” event that happens every time a face is uploaded to the face S3 bucket. Add S3 trigger from designer section on the left. 
+Next, we need to add the event that triggers this Lambda function. This will be an “S3:ObjectCreated” event that happens every time a face is uploaded to the face S3 bucket. Add S3 trigger from designer section on the left. 
 
 Configure with the following:
 
 Bucket name: face-detection-your-name (you created this bucket earlier)
-Event type- Object Created
+Event type- All object create events
 Prefix- faces/
 Filter- .jpg
 Enable trigger- ON (keep the checkbox on)
 
-Save the lambda function
+Click 'Add'
+
+Save the Lambda function
 
 Under 'Actions' tab choose **Publish**
 
@@ -434,8 +436,8 @@ NOTE: These metrics will only appear once they have been sent to Cloudwatch via 
 
 ### With this we have come to the end of the session. As part of building this project, you learnt the following:
 
-1. Modify the DeepLens inference lambda function to upload cropped faces to S3
-2. Deploy the inference lambda function and face detection model to DeepLens
-3. Create a lambda function to trigger Rekognition to identify emotions
+1. Modify the DeepLens inference Lambda function to upload cropped faces to S3
+2. Deploy the inference Lambda function and face detection model to DeepLens
+3. Create a Lambda function to trigger Rekognition to identify emotions
 4. Create a DynamoDB table to store the recognized emotions
 5. Analyze using CloudWatch
