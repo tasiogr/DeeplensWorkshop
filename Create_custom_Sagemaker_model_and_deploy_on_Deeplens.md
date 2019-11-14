@@ -314,7 +314,7 @@ To create an inference Lambda function, use the AWS Lambda console and follow th
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.png)
 
-4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter your user name and click 'Deploy'.
+4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter your like 'classification-userxxx' with your name and click 'Deploy'.
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.1.png)
 
