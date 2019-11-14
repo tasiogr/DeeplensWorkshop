@@ -6,12 +6,11 @@ In this project you will learn to build a deep learning model to identify and an
 
 ## In this workshop you will learn the following:
 
-1. How to build and train a face detection model in SageMaker
-2. Modify the DeepLens inference lambda function to upload cropped faces to S3
-3. Deploy the inference lambda function and face detection model to DeepLens
-4. Create a lambda function to trigger Rekognition to identify emotions
-5. Create a DynamoDB table to store the recognized emotions
-6. Analyze using CloudWatch
+1. Modify the DeepLens inference lambda function to upload cropped faces to S3
+2. Deploy the inference lambda function and face detection model to DeepLens
+3. Create a lambda function to trigger Rekognition to identify emotions
+4. Create a DynamoDB table to store the recognized emotions
+5. Analyze using CloudWatch
 
 ![image](https://user-images.githubusercontent.com/11222214/37996605-1ba4be34-31cd-11e8-9e25-ba3a1cdbc9db.png)
 
@@ -22,9 +21,9 @@ The workshop consists of 4 hands-on lab sessions:
 Follow instructions here: [Registration and Deployment lab](https://github.com/tasiogr/DeeplensWorkshop/tree/master/Registration%20and%20project%20deployment)
 
 
-# Hands-on Step 2: Build and train a face detection model in SageMaker
+# Hands-on Step 2: Deploy the AWS DeepLens face detection built-in project (optional)
 
-In this lab, you will build and train a face detection model. Follow instructions here: [SageMaker lab](https://github.com/tasiogr/DeeplensWorkshop/tree/master/SageMaker%20lab)
+In this lab, you will deploy a built-in face detection model and Lambda function. Follow instructions here: [Face detection lab](https://github.com/tasiogr/DeeplensWorkshop/blob/master/Deploying_Face_Detection.md)
 
 # Hands-on Step 3: Build a project to detect faces and send the cropped faces to S3 bucket
 
@@ -48,7 +47,7 @@ Go to [AWS Management console](https://console.aws.amazon.com/console/home?regio
 
 Choose 'Create bucket'
 
-Name your bucket : face-detection-your-user-name
+Name your bucket : face-detection-userxxx (substitute xxx with your own number)
 
 Click on Create 
 
@@ -75,7 +74,7 @@ Click 'Create function'
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.png)
 
-4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter 'sentiment-userxxx' with your own user name and click 'Deploy'.
+4. Give the application name a unique name like 'greengrass-sentiment-userxxx' and the IdentityNameParameter 'sentiment-userxxx' with your own user name and click 'Deploy'.
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.1.png)
 
@@ -97,9 +96,9 @@ This will launch a CloudFormation Stack that will deploy the Lambda function and
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-17.gif)
 
-Replace the default script with the [inference script](https://github.com/tasiogr/DeeplensWorkshop/blob/master/Inference%20Lambda/inference-lambda.py)
+Replace the default script with the [inference script](https://raw.githubusercontent.com/tasiogr/DeeplensWorkshop/master/Inference%20Lambda/inference-lambda.py)
 
-You can select the inference script, by selecting Raw in the Github page and choosing the script using ctrl+A/ cmd+A . Copy the script and paste it into the lambda function (make sure you delete the default code).
+Copy the script and paste it into the lambda function (make sure you delete the default code).
 
 **Note**: In the script, you will have to provide the name for your S3 bucket. Insert your bucket name in the code below
 
@@ -183,7 +182,7 @@ def push_to_s3(img, index):
 
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
         _, jpg_data = cv2.imencode('.jpg', img, encode_param)
-        response = s3.put_object(ACL='public-read',
+        response = s3.put_object(ACL='private',
                                  Body=jpg_data.tostring(),
                                  Bucket=bucket_name,
                                  Key=key)
@@ -271,7 +270,6 @@ def greengrass_infinite_infer_run():
 # Execute the function above
 greengrass_infinite_infer_run()
 
-
 # This is a dummy handler and will not be invoked
 # Instead the code above will be executed in an infinite loop for our example
 def function_handler(event, context):
@@ -288,7 +286,7 @@ Then, enter a brief description and click "Publish."
 
 Before we can run this lambda on the device, we need to attach the right permissions to the right roles. While we assigned a role to this lambda, "AWSDeepLensLambdaRole", it's only a placeholder. Lambda's deployed through greengrass actually inherit their policy through a greengrass group role.
 
-We need to add permissions to this role for the lambda function to access S3. To do this, go to the IAM dashboard, find the "AWSDeepLensGreenGrassGroupRole", and attach the policy "AmazonS3FullAccess". 
+We need to add permissions to this role for the Lambda function to access S3, but this already prepared in this workshop. However, if you would want to do this, go to the IAM dashboard, find the "AWSDeepLensGreenGrassGroupRole", and attach the policy "AmazonS3FullAccess" or create a more restrictive one.
 
 ### Create & Deploy DeepLens Project
 
@@ -306,7 +304,7 @@ Next, select "Create a new blank project" then click "Next".
 
 ![Alt text](/screenshots/deeplens_project_2.png)
 
-Now, name your deeplens project.
+Now, name your deeplens project with a unique name such as 'sentiment-userxxx'.
 
 ![Alt text](/screenshots/deeplens_project_3.png)
 
@@ -344,8 +342,6 @@ You should now start to see deployment status. Once the project has been deploye
 
 You will find your cropped faces uplaod to your S3 bucket.
 
-
-
 # Hands-on Step 4: Identify emotions
 
 **Step I- Create DynamoDB table**
@@ -354,7 +350,7 @@ Go to [AWS Management console](https://console.aws.amazon.com/console/home?regio
 
 Click on Create Table.
 
-Name of the table: recognize-emotions-your-name
+Name of the table: recognize-emotions-userxxx
 Primary key: s3key
 
 Click on Create. This will create a table in your DynamoDB.
@@ -393,7 +389,7 @@ Click 'Create function'
 
 Choose 'Author from scratch'
 
-Name the function: recognize-emotion-your-name.  
+Name the function: recognize-emotion-userxxx.  
 Runtime: Choose Python 2.7
 Role: Choose an existing role
 Existing role: rekognizeEmotions
@@ -425,7 +421,7 @@ Under 'Actions' tab choose **Publish**
 
 Go to [AWS Management console](https://console.aws.amazon.com/console/home?region=us-east-1) and search for Cloudwatch
 
-Create a dashboard called “sentiment-dashboard-your-name”
+Create a dashboard called 'sentiment-dashboard-userxxx'
 
 Choose Line in the widget
 
@@ -438,9 +434,8 @@ NOTE: These metrics will only appear once they have been sent to Cloudwatch via 
 
 ### With this we have come to the end of the session. As part of building this project, you learnt the following:
 
-1.	How to build and train a face detection model in SageMaker
-2.	Modify the DeepLens inference lambda function to upload cropped faces to S3
-3.	Deploy the inference lambda function and face detection model to DeepLens
-4.	Create a lambda function to trigger Rekognition to identify emotions
-5.	Create a DynamoDB table to store the recognized emotions
-6.	Analyze using CloudWatch
+1. Modify the DeepLens inference lambda function to upload cropped faces to S3
+2. Deploy the inference lambda function and face detection model to DeepLens
+3. Create a lambda function to trigger Rekognition to identify emotions
+4. Create a DynamoDB table to store the recognized emotions
+5. Analyze using CloudWatch

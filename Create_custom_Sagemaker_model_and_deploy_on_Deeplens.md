@@ -275,6 +275,13 @@ Now Log into AWS DeepLens Console (https://console.aws.amazon.com/deeplens/home?
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-8.gif)
 
+Import the trained model
+
+Select Amazon SageMaker trained model, in the Model setting, Amazon SageMaker training job ID drop down, select the imageclassification model you selected. In Model name choose a unique model name e.g. imageclassification-userxxx, keep description as image classification.
+
+![](SageMakerImageClassification/images/sagemaker-to-deeplens-12.png)
+
+If you could not train model using Sagemaker then select "Externally trained model" and in S3 bucket enter "deeplens-mahendra/techsummit". In Model name choose model name e.g. imageclassification, keep description as image classification. Select MXNet as the Model framework and click on "Import model" to save the configuration.
 
 Create new project
 
@@ -287,23 +294,11 @@ Choose – Create a new blank project
 Name the project with a unique name – e.g. imageclassification-userxxx
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-11.png)
 
-Select Add Model – this will open new page, “Import model to AWS Deeplens”
-
-Select Amazon SageMaker trained model, in the Model setting, Amazon SageMaker training job ID drop down, select the imageclassification model you selected. In Model name choose a unique model name e.g. imageclassification-userxxx, keep description as image classification.
-
-![](SageMakerImageClassification/images/sagemaker-to-deeplens-12.png)
-
-If you could not train model using Sagemaker then select "Externally trained model" and in S3 bucket enter "deeplens-mahendra/techsummit". In Model name choose model name e.g. imageclassification, keep description as image classification. Select MXNet as the Model framework and click on "Import model" to save the configuration.
-
-Go back to import model screen, select the imageclassification model you imported earlier, click Add model. Once model is added, you need to add a lambda function by choosing Add function.
+Select Add Model and select the imageclassification-userxxx model you imported earlier, click Add model. Once model is added, you need to add a Lambda function by choosing Add function, but before you need to create one.
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-13.png)
 
-To create a AWS DeepLens lambda function, you can follow the blog post: Dive deep into AWS DeepLens Lambda functions and the new model optimizer.
-
-To provide an easy reference, we have provided the instructions for the lambda function for image classification below.
-
-To create an inference Lambda function, use the AWS Lambda console and follow the steps below:
+To create an AWS DeepLens inference Lambda function, use the AWS Lambda console and follow the steps below:
 
 1. Choose Create function. You customize this function to run inference for your deep learning models.
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-14.gif)
@@ -314,7 +309,7 @@ To create an inference Lambda function, use the AWS Lambda console and follow th
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.png)
 
-4. Give the application name a unique name like 'greengrass-hello-world-userxxx' and the IdentityNameParameter your like 'classification-userxxx' with your name and click 'Deploy'.
+4. Give the application name a unique name like 'greengrass-imgclassification-userxxx' and the IdentityNameParameter your like 'classification-userxxx' with your name and click 'Deploy'.
 
 ![](SageMakerImageClassification/images/sagemaker-to-deeplens-15.1.png)
 
